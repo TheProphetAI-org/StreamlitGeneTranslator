@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 
 PG_DB_results/
+Pollo/
