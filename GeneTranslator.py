@@ -14,9 +14,13 @@ def connect():
     cursor = connection.cursor()
     return cursor
 
-def build_query(gene):
+def build_query(gene,source):
     #postgreSQL_select_Query = 'SELECT "GeneSym", "UniprotID" FROM public."GeneTab" WHERE "UniprotID"=\'{}\''
-    query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE \'{}\' in ("GeneSymbol","UniprotID","BioGRID","ChEMBL","ComplexPortal","DIP","DrugBank","GO","String") LIMIT 1'.format(gene)
+    if source == 'All':
+        query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE \'{}\' in ("GeneSymbol","UniprotID","BioGRID","ChEMBL","ComplexPortal","DIP","DrugBank","GO","String") LIMIT 1'.format(gene)
+    else:
+        query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE "{}" = \'{}\''.format(source,gene)
+        print(query)
     return query
 
 def preprocess_text_input(text):
@@ -33,18 +37,29 @@ def preprocess_text_input(text):
 
 #APP
 
-#Input section
+#Title
 st.title('GeneTranslator')
+
+#Connect
+try:
+    cursor=connect()
+except:
+    st.write("Error: Please reload the page")
+
+#Input section
 st.text("Enter one of more IDs. Separate IDs by whitespace (space, tab, newline)")
 text=st.text_area(label="Insert Here Your Genes")
+cursor.execute('SELECT column_name FROM information_schema.columns WHERE table_name = \'GeneTab_Full\'')
+cols=pd.DataFrame(cursor.fetchall())
+options=pd.concat([pd.DataFrame(['All']).append(cols)])
+source=st.selectbox("Chose your nomenclature, if 'All' selected the system will look at all the available sources and might take some time",options)
+
 
 #Buttons
 col1,col2= st.columns(2)
 bt=col1.button("Translate", key=1)
 placeholder= col2.empty()
-
 df=preprocess_text_input(text)
-cursor=connect()
 
 
 if bt:
@@ -55,19 +70,17 @@ if bt:
     for index, row in df.iterrows():
         my_bar.progress(index/len(df)+1/len(df))
         try:
-            cursor.execute(build_query(row[0]))
+            cursor.execute(build_query(row[0],source))
+            selection = cursor.fetchall()
+            result = pd.DataFrame(selection)
         except:
             st.write("Error: Please reload the page")
-        selection = cursor.fetchall()
-        result = pd.DataFrame(selection)
-        print(result)
         col1.text(row[0])
         gene_org=gene_org+"\n"+ row[0]
         try:
             col2.text(result[0].values[0])
             genetext=genetext+"\n"+ result[0].values[0]
         except:
-            genetext=genetext+"\n"+ "na"
             col2.text('na')
-    placeholder.download_button(label="Download data as txt file", data=genetext,file_name='large_df.txt',mime='text/csv',)
+    placeholder.download_button(label="Download data as txt file", data=genetext,file_name='GeneSymbol.txt',mime='text/csv',)
 
