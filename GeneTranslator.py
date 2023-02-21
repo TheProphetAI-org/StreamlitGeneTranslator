@@ -30,6 +30,7 @@ def preprocess_text_input(text):
     df = pd.DataFrame([s.strip() for s in text.split()])#.transpose()
     return df
 
+
 #APP
 
 #Input section
@@ -60,17 +61,13 @@ if bt:
         selection = cursor.fetchall()
         result = pd.DataFrame(selection)
         print(result)
-        #col1.text(row[0])
+        col1.text(row[0])
         gene_org=gene_org+"\n"+ row[0]
         try:
-            #col2.text(result[0].values[0])
+            col2.text(result[0].values[0])
             genetext=genetext+"\n"+ result[0].values[0]
         except:
             genetext=genetext+"\n"+ "na"
-            #col2.text('na')
-    
-if 'genetext' in locals():
-    col1.text(gene_org)
-    col2.text(genetext)
-    cpbt=placeholder.button("Copy to clipboard", on_click=pyperclip.copy(genetext),key=2)
+            col2.text('na')
+    placeholder.download_button(label="Download data as txt file", data=genetext,file_name='large_df.txt',mime='text/csv',)
 
