@@ -34,7 +34,7 @@ def preprocess_text_input(text):
 
 #Input section
 st.title('GeneTranslator')
-st.text("Enter one of more IDs (100,000 max). Separate IDs by whitespace (space, tab, newline)")
+st.text("Enter one of more IDs. Separate IDs by whitespace (space, tab, newline)")
 text=st.text_area(label="Insert Here Your Genes")
 
 #Buttons
