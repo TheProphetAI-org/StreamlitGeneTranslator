@@ -5,6 +5,7 @@ import psycopg2
 import pyperclip
 
 #functions
+@st.cache_resource
 def connect():
     connection = psycopg2.connect(user="gene_db_light_user",
                                 password="l9KqjzIpUFh0VTfW9N6871fBxa7B2GmX",
@@ -22,6 +23,13 @@ def build_query(gene,source):
         query ='SELECT "genesymbol" FROM public."GeneTab_Light" WHERE "{}" = \'{}\''.format(source,gene)
         print(query)
     return query
+
+@st.cache_data
+def get_cols(cursor):
+    cursor.execute('SELECT column_name FROM information_schema.columns WHERE table_name = \'GeneTab_Light\'')
+    cols=pd.DataFrame(cursor.fetchall())
+    options=pd.concat([pd.DataFrame(['All']).append(cols)])
+    return options
 
 def preprocess_text_input(text):
     special_characters=['@','#','$','*','&']
@@ -49,9 +57,7 @@ except:
 #Input section
 st.text("Enter one of more IDs. Separate IDs by whitespace (space, tab, newline)")
 text=st.text_area(label="Insert Here Your Genes")
-cursor.execute('SELECT column_name FROM information_schema.columns WHERE table_name = \'GeneTab_Light\'')
-cols=pd.DataFrame(cursor.fetchall())
-options=pd.concat([pd.DataFrame(['All']).append(cols)])
+options=get_cols(cursor)
 source=st.selectbox("Chose your nomenclature, if 'All' selected the system will look at all the available sources and might take some time",options)
 
 
