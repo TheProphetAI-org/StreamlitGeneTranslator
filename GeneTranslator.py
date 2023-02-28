@@ -6,18 +6,18 @@ import pyperclip
 
 #functions
 def connect():
-    connection = psycopg2.connect(user="gene_db_user",
-                                password="xJzyiS7igd4nqfLEiUURCXOUifHJZaRr",
-                                host="dpg-cfn5smqrrk0eqluh0nug-a.frankfurt-postgres.render.com",
+    connection = psycopg2.connect(user="gene_db_light_user",
+                                password="l9KqjzIpUFh0VTfW9N6871fBxa7B2GmX",
+                                host="dpg-cfuennh4reb6ks4hpit0-a.frankfurt-postgres.render.com",
                                 port="5432",
-                                database="gene_db")
+                                database="gene_db_light")
     cursor = connection.cursor()
     return cursor
 
 def build_query(gene,source):
     #postgreSQL_select_Query = 'SELECT "GeneSym", "UniprotID" FROM public."GeneTab" WHERE "UniprotID"=\'{}\''
     if source == 'All':
-        query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE \'{}\' in ("GeneSymbol","UniprotID","BioGRID","ChEMBL","ComplexPortal","DIP","DrugBank","GO","String") LIMIT 1'.format(gene)
+        query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE \'{}\' in ("genesymbol","uniprot","biogrid","chembl","string","ensemblid","hgnc","name","ncbi","alias") LIMIT 1'.format(gene)
     else:
         query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE "{}" = \'{}\''.format(source,gene)
         print(query)
