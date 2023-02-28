@@ -17,9 +17,9 @@ def connect():
 def build_query(gene,source):
     #postgreSQL_select_Query = 'SELECT "GeneSym", "UniprotID" FROM public."GeneTab" WHERE "UniprotID"=\'{}\''
     if source == 'All':
-        query ='SELECT "GeneSymbol" FROM public."GeneTab_Light" WHERE \'{}\' in ("genesymbol","uniprot","biogrid","chembl","string","ensemblid","hgnc","name","ncbi","alias") LIMIT 1'.format(gene)
+        query ='SELECT "genesymbol" FROM public."GeneTab_Light" WHERE \'{}\' in ("genesymbol","uniprot","biogrid","chembl","string","ensemblid","hgnc","name","ncbi","alias") LIMIT 1'.format(gene)
     else:
-        query ='SELECT "GeneSymbol" FROM public."GeneTab_Light" WHERE "{}" = \'{}\''.format(source,gene)
+        query ='SELECT "genesymbol" FROM public."GeneTab_Light" WHERE "{}" = \'{}\''.format(source,gene)
         print(query)
     return query
 
@@ -49,7 +49,7 @@ except:
 #Input section
 st.text("Enter one of more IDs. Separate IDs by whitespace (space, tab, newline)")
 text=st.text_area(label="Insert Here Your Genes")
-cursor.execute('SELECT column_name FROM information_schema.columns WHERE table_name = \'GeneTab_Full\'')
+cursor.execute('SELECT column_name FROM information_schema.columns WHERE table_name = \'GeneTab_Light\'')
 cols=pd.DataFrame(cursor.fetchall())
 options=pd.concat([pd.DataFrame(['All']).append(cols)])
 source=st.selectbox("Chose your nomenclature, if 'All' selected the system will look at all the available sources and might take some time",options)
