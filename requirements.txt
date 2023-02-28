@@ -5,4 +5,4 @@ numpy==1.23.5
 pandas==1.5.2
 psycopg2-binary
 pyperclip==1.8.
-streamlit==1.16.0
+streamlit==1.18.0
