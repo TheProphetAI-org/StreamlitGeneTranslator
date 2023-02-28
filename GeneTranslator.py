@@ -25,7 +25,7 @@ def build_query(gene,source):
     return query
 
 @st.cache_data
-def get_cols(cursor):
+def get_cols(_cursor):
     cursor.execute('SELECT column_name FROM information_schema.columns WHERE table_name = \'GeneTab_Light\'')
     cols=pd.DataFrame(cursor.fetchall())
     options=pd.concat([pd.DataFrame(['All']).append(cols)])
