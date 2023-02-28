@@ -17,9 +17,9 @@ def connect():
 def build_query(gene,source):
     #postgreSQL_select_Query = 'SELECT "GeneSym", "UniprotID" FROM public."GeneTab" WHERE "UniprotID"=\'{}\''
     if source == 'All':
-        query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE \'{}\' in ("genesymbol","uniprot","biogrid","chembl","string","ensemblid","hgnc","name","ncbi","alias") LIMIT 1'.format(gene)
+        query ='SELECT "GeneSymbol" FROM public."GeneTab_Light" WHERE \'{}\' in ("genesymbol","uniprot","biogrid","chembl","string","ensemblid","hgnc","name","ncbi","alias") LIMIT 1'.format(gene)
     else:
-        query ='SELECT "GeneSymbol" FROM public."GeneTab_Full" WHERE "{}" = \'{}\''.format(source,gene)
+        query ='SELECT "GeneSymbol" FROM public."GeneTab_Light" WHERE "{}" = \'{}\''.format(source,gene)
         print(query)
     return query
 
